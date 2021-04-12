@@ -1,5 +1,7 @@
 package suanfa;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.util.*;
 
 /**
@@ -18,6 +20,7 @@ public class 数组的相对排序 {
         {
             map.put(arr2[i],i);
         }
+
         Integer[] ans=new Integer[arr1.length];
         for (int i=0;i<arr1.length;i++)
         {
