@@ -33,6 +33,7 @@ public class Reactor implements  Runnable {
             {
                 SelectionKey sk= (SelectionKey) iterator.next();
                 dispatch(sk);
+                iterator.remove();
 
             }
         }

@@ -15,12 +15,10 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class client {
+    static    SocketChannel socketChannel=null;
     public static void main(String[] args) throws IOException {
-        SocketChannel socketChannel=SocketChannel.open();
-       InetSocketAddress address= new InetSocketAddress("127.0.0.1",8000);
-        socketChannel.configureBlocking(false);
-        Selector selector=Selector.open();
-        socketChannel.register(selector, SelectionKey.OP_READ);
+       socketChannel =SocketChannel.open();
+       InetSocketAddress address= new InetSocketAddress("127.0.0.1",8080);
         if (!socketChannel.connect(address))
         {
             while (!socketChannel.finishConnect()) {
@@ -31,50 +29,40 @@ public class client {
             @Override
             public void run() {
                 for (;;) {
-                    Set<SelectionKey> selectionKeys = selector.selectedKeys();
-                    Iterator iterator=selectionKeys.iterator();
-                    while (iterator.hasNext())
-                    {
-                        SelectionKey selectionKey= (SelectionKey) iterator.next();
-                        if (selectionKey.isReadable())
-                        {
-                            try {
-                                handel(selectionKey,selector);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+
+                    try {
+                        handel();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
+                }
                 }
 
-            }
         }
         ).start();
+
         Scanner scanner=new Scanner(System.in);
         while (scanner.hasNextLine())
         {
             String content=scanner.nextLine();
             socketChannel.write(Charset.forName("UTF-8").encode(content));
-
         }
 
 
     }
-    static void handel(SelectionKey selectionKey,Selector selector) throws IOException {
-        SocketChannel socketChannel= (SocketChannel) selectionKey.channel();
+    static void handel() throws IOException {
         ByteBuffer byteBuffer=ByteBuffer.allocate(1024);
         String response="";
-        while (socketChannel.read(byteBuffer)>0)
+        if (socketChannel.read(byteBuffer)>0)
         {
             byteBuffer.flip();
-                response+=Charset.forName("UTF-8").decode(byteBuffer);
+            byte[] bytes=new byte[byteBuffer.limit()];
+            byteBuffer.get(bytes);
+            response+=new String(bytes);
         }
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector,SelectionKey.OP_READ);
-        while (response.length()>0)
-        {
-            System.out.println(response);
-        }
+        System.out.println(response);
+
     }
 
 }

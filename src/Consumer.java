@@ -1,7 +1,9 @@
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 //消费者
 public class Consumer implements Runnable {
+
 
     private final BlockingQueue blockingQueue;
 
